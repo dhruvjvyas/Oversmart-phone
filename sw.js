@@ -1,8 +1,9 @@
-/* sw.js — offline shell + the machinery for real notifications.
-   Push (server-sent) can be wired later; local notifications via
-   registration.showNotification already work from the page. */
+/* sw.js — offline shell + notification plumbing.
+   NETWORK-FIRST: always try the live server, fall back to cache
+   when offline. This keeps the installed phone in sync with the
+   repo instead of serving stale code forever. */
 
-const CACHE = "osp-shell-v1";
+const CACHE = "osp-shell-v3";
 const SHELL = [
   "./",
   "./index.html",
@@ -10,6 +11,7 @@ const SHELL = [
   "./js/timewords.js",
   "./js/store.js",
   "./js/unlock.js",
+  "./js/overlays.js",
   "./js/app.js",
   "./manifest.webmanifest",
   "./assets/icon-192.png",
@@ -33,15 +35,13 @@ self.addEventListener("activate", (e) => {
 self.addEventListener("fetch", (e) => {
   if (e.request.method !== "GET") return;
   e.respondWith(
-    caches.match(e.request).then(
-      (hit) =>
-        hit ||
-        fetch(e.request).then((res) => {
-          const copy = res.clone();
-          caches.open(CACHE).then((c) => c.put(e.request, copy));
-          return res;
-        })
-    )
+    fetch(e.request)
+      .then((res) => {
+        const copy = res.clone();
+        caches.open(CACHE).then((c) => c.put(e.request, copy));
+        return res;
+      })
+      .catch(() => caches.match(e.request))
   );
 });
 

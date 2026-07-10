@@ -36,36 +36,40 @@ const Overlays = (() => {
 
   /* ---------------- gesture detection ---------------- */
 
-  const TOP_ZONE = 84;     // px from top — the invisible squares in Figma
+  const TOP_ZONE = 100;    // px from top — the invisible squares in Figma
   const THRESHOLD = 60;    // px of drag before an intent is committed
 
   let start = null;
+  let committed = false;
 
   document.addEventListener(
     "pointerdown",
     (e) => {
+      committed = false;
       /* ignore drags that begin on interactive controls or scrollable feed */
       if (e.target.closest("button, input, a, .drawer__feed, .vslider")) {
         start = null;
         return;
       }
-      start = { x: e.clientX, y: e.clientY, t: Date.now() };
+      start = { x: e.clientX, y: e.clientY };
     },
     { passive: true }
   );
 
+  /* commit mid-drag: on touch, pointerup is unreliable because the
+     browser may claim the gesture — so act the moment the threshold
+     is crossed */
   document.addEventListener(
-    "pointerup",
+    "pointermove",
     (e) => {
-      if (!start) return;
+      if (!start || committed) return;
       const dx = e.clientX - start.x;
       const dy = e.clientY - start.y;
+      if (Math.abs(dy) < THRESHOLD || Math.abs(dx) > Math.abs(dy)) return;
+
+      committed = true;
       const fromTop = start.y <= TOP_ZONE;
       const fromLeft = start.x < window.innerWidth / 2;
-      const s = start;
-      start = null;
-
-      if (Math.abs(dy) < THRESHOLD || Math.abs(dx) > Math.abs(dy)) return;
 
       /* an overlay is open: any committed vertical drag closes it */
       if (isOpen()) {
@@ -83,11 +87,22 @@ const Overlays = (() => {
       const homeActive = document
         .getElementById("screen-home")
         .classList.contains("is-active");
-      if (dy < 0 && homeActive && s.y > window.innerHeight * 0.4) {
+      if (dy < 0 && homeActive && start.y > window.innerHeight * 0.4) {
         open("drawer");
       }
     },
     { passive: true }
+  );
+
+  ["pointerup", "pointercancel"].forEach((evt) =>
+    document.addEventListener(
+      evt,
+      () => {
+        start = null;
+        committed = false;
+      },
+      { passive: true }
+    )
   );
 
   /* Escape closes overlays (desktop dev nicety) */

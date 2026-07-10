@@ -27,6 +27,9 @@ html, body {
   -webkit-user-select: none;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
+  /* the OS owns its gestures: no browser scroll, no pull-to-refresh */
+  touch-action: none;
+  overscroll-behavior: none;
 }
 
 button {
@@ -493,6 +496,7 @@ button:focus-visible, input:focus-visible {
   gap: 24px;
   padding-bottom: 24px;
   -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
 }
 .appcard {
   background: #e6e6e6;
