@@ -218,8 +218,14 @@
 
   <!-- ============ OVERSMART AI SHEET ============ -->
   <section id="overlay-ai" class="overlay overlay--dissolve" aria-label="Oversmart AI">
+    <div class="ai-sheet">
+      <p class="ai-sheet__you" id="ai-you"></p>
+      <div class="ai-sheet__answer" id="ai-answer"></div>
+      <div class="ai-waveform" id="ai-waveform" aria-hidden="true"></div>
+      <p class="ai-sheet__status" id="ai-status">Tap to speak. Oversmart AI is listening for what you meant.</p>
+    </div>
     <button class="ai-pill" id="ai-pill">
-      <span>Ask Oversmart AI</span>
+      <span id="ai-pill-label">Ask Oversmart AI</span>
       <svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 0 0 3-3V7a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3Z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M6.5 12a5.5 5.5 0 0 0 11 0M12 17.5V20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
     </button>
   </section>
@@ -231,6 +237,7 @@
   <script src="js/store.js"></script>
   <script src="js/unlock.js"></script>
   <script src="js/overlays.js"></script>
+  <script src="js/oversmart-ai.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

@@ -248,6 +248,7 @@ const Overlays = (() => {
 
   document.addEventListener("overlay:open", (e) => {
     if (e.detail === "drawer") renderFeed();
+    if (e.detail === "ai" && window.OversmartAI) OversmartAI.reset();
   });
 
   return { open, close, isOpen };

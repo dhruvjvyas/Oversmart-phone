@@ -105,7 +105,7 @@
   /* ---------- AI sheet ---------- */
 
   document.getElementById("ai-pill").addEventListener("click", () => {
-    toast("Oversmart AI has already decided what you were looking for.");
+    OversmartAI.onPill();
   });
 
   /* ---------- app drawer feed events ---------- */
@@ -144,6 +144,7 @@
       Store.markPutDown();
       Unlock.cancel();
       Overlays.close();
+      if (window.OversmartAI) OversmartAI.reset();
       show("lock");
       tick();
     } else {

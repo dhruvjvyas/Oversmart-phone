@@ -1,9 +1,8 @@
 /* sw.js — offline shell + notification plumbing.
-   NETWORK-FIRST: always try the live server, fall back to cache
-   when offline. This keeps the installed phone in sync with the
-   repo instead of serving stale code forever. */
+   NETWORK-FIRST for the shell; /api/* is never cached (it must reach
+   the live serverless function each time). */
 
-const CACHE = "osp-shell-v3";
+const CACHE = "osp-shell-v4";
 const SHELL = [
   "./",
   "./index.html",
@@ -12,6 +11,7 @@ const SHELL = [
   "./js/store.js",
   "./js/unlock.js",
   "./js/overlays.js",
+  "./js/oversmart-ai.js",
   "./js/app.js",
   "./manifest.webmanifest",
   "./assets/icon-192.png",
@@ -33,7 +33,8 @@ self.addEventListener("activate", (e) => {
 });
 
 self.addEventListener("fetch", (e) => {
-  if (e.request.method !== "GET") return;
+  if (e.request.method !== "GET") return;                 // POSTs to /api pass through
+  if (new URL(e.request.url).pathname.startsWith("/api/")) return; // never cache the AI
   e.respondWith(
     fetch(e.request)
       .then((res) => {
@@ -45,8 +46,6 @@ self.addEventListener("fetch", (e) => {
   );
 });
 
-/* Tapping a masked notification opens the app — which locks it,
-   which demands a reason. The loop closes. */
 self.addEventListener("notificationclick", (e) => {
   e.notification.close();
   e.waitUntil(

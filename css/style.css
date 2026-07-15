@@ -548,3 +548,72 @@ button:focus-visible, input:focus-visible {
   font-size: 20px;
 }
 .ai-pill svg { width: 24px; height: 24px; }
+
+/* ============================================================
+   OVERSMART AI SHEET — voice in, answer out
+   ============================================================ */
+
+.ai-sheet {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 20px;
+  padding: 56px 24px 8px;
+  overflow-y: auto;
+  touch-action: pan-y;
+}
+.ai-sheet__you {
+  color: var(--white);
+  font-size: 20px;
+  font-weight: 600;
+  text-align: right;
+  opacity: 0.9;
+}
+.ai-sheet__you:empty { display: none; }
+
+.ai-sheet__answer {
+  color: var(--white);
+  font-size: 18px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+.ai-sheet__answer:empty { display: none; }
+.ai-sheet__answer .cursor {
+  display: inline-block;
+  width: 8px;
+  height: 18px;
+  margin-left: 2px;
+  background: var(--white);
+  vertical-align: text-bottom;
+  animation: blink 1s steps(2) infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+.ai-waveform {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 60px;
+}
+.ai-waveform.is-live { display: flex; }
+.ai-waveform__bar {
+  width: 6px;
+  min-height: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--white-60);
+  transition: height 90ms linear;
+}
+
+.ai-sheet__status {
+  color: var(--white-60);
+  font-size: 13px;
+  text-align: center;
+  padding-bottom: 4px;
+}
+.ai-sheet__status:empty { display: none; }
+
+.ai-pill.is-busy { opacity: 0.6; pointer-events: none; }
+.ai-pill.is-listening { background: #4a4a58; }
